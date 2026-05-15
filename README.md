@@ -1,57 +1,89 @@
-# Markdown Previewer Simples — Planejamento
+# Markdown Preview
 
-## Objetivo
-Criar um app simples de **edição e pré-visualização de Markdown** com foco em produtividade rápida.
+A simple desktop Markdown editor and previewer built with React, TypeScript, Vite, and Tauri.
 
-## Escopo (MVP)
-O app deve ter, além do preview em tempo real:
+The goal of the project is to provide a focused workspace where users can write Markdown on one side and inspect the rendered preview on the other side.
 
-1. **Resetar**: limpar o conteúdo do editor e restaurar um texto padrão.
-2. **Copiar**: copiar o Markdown (ou HTML renderizado, conforme decisão de implementação) para a área de transferência.
-3. **Exportar como PDF**: gerar PDF a partir da área de preview.
-4. **Sincronizar scroll**: manter editor e preview alinhados durante a rolagem.
-5. **Novo**: iniciar um novo documento em branco (ou com template padrão).
-6. **Abrir**: carregar arquivo `.md` local para o editor.
-7. **Salvar**: salvar o conteúdo atual em arquivo `.md`.
+## Current Status
 
-## Requisitos funcionais
-- Editor com atualização instantânea no preview.
-- Barra de ações com botões: **Novo**, **Abrir**, **Salvar**, **Resetar**, **Copiar**, **Exportar PDF**.
-- Feedback visual de ações concluídas (ex.: “copiado com sucesso”).
-- Scroll sync bidirecional (editor -> preview e preview -> editor), com proteção contra loop.
-- Fluxo de arquivo com seletor nativo para abrir/salvar documentos Markdown.
+The application currently includes the base visual structure:
 
-## Requisitos técnicos sugeridos
-- **Frontend:** React + TypeScript.
-- **Renderização Markdown:** `react-markdown` (com suporte opcional a GFM).
-- **Exportação PDF:** usar mecanismo de impressão/webview (Tauri/Web APIs) para gerar PDF do preview.
-- **Clipboard:** API nativa (`navigator.clipboard`) no frontend ou comando Tauri, se necessário.
-- **Acesso a arquivos:** diálogo de arquivo + leitura/escrita via APIs do Tauri.
+- A top toolbar for document actions.
+- A split workspace with an editor panel and a preview panel.
+- Separate React components for the toolbar, editor, and preview.
+- Separate CSS files per component to keep styling responsibilities clear.
 
-## Estrutura inicial sugerida
-- `src/App.tsx`: layout principal, estado do markdown e ações globais.
-- `src/components/Editor.tsx`: textarea/editor e eventos de scroll/input.
-- `src/components/Preview.tsx`: renderização markdown + controle de scroll.
-- `src/utils/scrollSync.ts`: lógica de sincronização de rolagem.
-- `src/utils/pdfExport.ts`: utilitário de exportação em PDF.
-- `src/utils/fileActions.ts`: utilitários de novo/abrir/salvar arquivo Markdown.
+Markdown rendering, file actions, clipboard support, PDF export, and scroll synchronization are planned but not implemented yet.
 
-## Plano de implementação
-1. Montar layout base (editor + preview + toolbar).
-2. Implementar preview em tempo real.
-3. Implementar ações de arquivo: **Novo**, **Abrir** e **Salvar**.
-4. Implementar ação de reset com conteúdo padrão.
-5. Implementar ação de copiar com feedback ao usuário.
-6. Implementar exportação para PDF.
-7. Implementar sincronização de scroll com controle anti-loop.
-8. Refinar UX, tratamento de erros e estados de loading.
+## Planned Features
 
-## Critérios de aceite
-- Alterações no editor refletem imediatamente no preview.
-- Botão **Novo** limpa o editor corretamente para iniciar novo documento.
-- Botão **Abrir** carrega arquivo Markdown válido no editor.
-- Botão **Salvar** grava o conteúdo atual em `.md` sem perda de texto.
-- Botão **Resetar** restaura corretamente o estado inicial.
-- Botão **Copiar** funciona e informa sucesso/erro.
-- Botão **Exportar PDF** gera arquivo válido com o conteúdo do preview.
-- Scroll sync funciona sem travamentos ou “efeito ping-pong”.
+- Live Markdown preview.
+- New document action.
+- Open local `.md` files.
+- Save Markdown files.
+- Reset editor content to a default template.
+- Copy Markdown or rendered HTML to the clipboard.
+- Export the preview as PDF.
+- Synchronized scrolling between the editor and preview.
+- Visual feedback for completed or failed actions.
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tauri
+
+## Project Structure
+
+```text
+src/
+  App.tsx
+  App.css
+  components/
+    Editor.tsx
+    Editor.css
+    Preview.tsx
+    Preview.css
+    Toolbar.tsx
+    Toolbar.css
+src-tauri/
+  Tauri desktop application source
+```
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the Vite development server:
+
+```bash
+npm run dev
+```
+
+Build the frontend:
+
+```bash
+npm run build
+```
+
+Run the Tauri application:
+
+```bash
+npm run tauri dev
+```
+
+## Implementation Roadmap
+
+1. Build the base layout with toolbar, editor, and preview.
+2. Add Markdown state management.
+3. Implement real-time Markdown rendering.
+4. Add document actions: new, open, and save.
+5. Add reset and copy actions with user feedback.
+6. Add PDF export from the preview area.
+7. Add bidirectional scroll synchronization.
+8. Refine error handling and loading states.
