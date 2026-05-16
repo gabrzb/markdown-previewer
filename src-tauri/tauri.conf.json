@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
-        "title": "markdown-preview",
+        "title": "markdown-previewer",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "decorations": true
       }
     ],
     "security": {
