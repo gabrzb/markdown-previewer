@@ -7,13 +7,13 @@
 }
 
 .mp-preview--serif {
-  font-family: "Source Serif 4", "Charter", Georgia, serif;
+  font-family: "Source Serif 4", Charter, Georgia, serif;
   font-size: 16.5px;
   line-height: 1.65;
 }
 
 .mp-preview--sans {
-  font-family: "Geist", -apple-system, system-ui, sans-serif;
+  font-family: Geist, -apple-system, system-ui, sans-serif;
   font-size: 15.5px;
   line-height: 1.6;
 }
@@ -22,7 +22,7 @@
 .mp-preview h2,
 .mp-preview h3,
 .mp-preview h4 {
-  font-family: "Geist", -apple-system, system-ui, sans-serif;
+  font-family: Geist, -apple-system, system-ui, sans-serif;
   color: var(--ink);
   line-height: 1.2;
   letter-spacing: -0.01em;

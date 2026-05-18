@@ -47,6 +47,7 @@ function App() {
         onChange={setMarkdown}
         focused={focused === "editor"}
         onFocus={() => setFocused("editor")}
+        onReset={() => setMarkdown(DEFAULT_MD)}
       />
       <Preview
         source={markdown}

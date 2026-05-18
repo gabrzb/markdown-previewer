@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { marked } from "marked";
 import "./Preview.css";
 import { CheckIcon, CopyIcon, MoonIcon, PdfIcon, SunIcon } from "./icons";
 
@@ -8,8 +9,6 @@ type PreviewProps = {
   onFocus: () => void;
 };
 
-// Static markup mirroring the default markdown — preview rendering will be
-// wired up when the parser logic lands.
 const STATIC_PREVIEW_HTML = `
 <h1>Project notes</h1>
 <p>A quick rundown of where things stand this week. The editor and preview have settled on <strong>two floating windows</strong> rather than a split pane — each can be moved and resized on its own.</p>
@@ -33,7 +32,13 @@ const STATIC_PREVIEW_HTML = `
 
 export function Preview({ source, focused, onFocus }: PreviewProps) {
   const [dark, setDark] = useState(false);
-  const [copied] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const renderedHtml = useMemo(
+    () => (source.trim() ? (marked(source) as string) : STATIC_PREVIEW_HTML),
+    [source],
+  );
 
   const wordCount = useMemo(
     () => (source.trim().match(/\S+/g) || []).length,
@@ -44,6 +49,17 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
     const next = !dark;
     setDark(next);
     document.documentElement.dataset.theme = next ? "dark" : "light";
+  };
+
+  const handleCopy = async () => {
+    const text = previewRef.current?.innerText ?? source;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadPdf = () => {
+    window.print();
   };
 
   return (
@@ -69,8 +85,9 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
 
       <div className="mp-body">
         <div
+          ref={previewRef}
           className="mp-preview mp-preview--serif"
-          dangerouslySetInnerHTML={{ __html: STATIC_PREVIEW_HTML }}
+          dangerouslySetInnerHTML={{ __html: renderedHtml }}
         />
 
         <div className="mp-status">
@@ -81,6 +98,7 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
           <button
             type="button"
             className={"mp-pillbtn" + (copied ? " mp-pillbtn--done" : "")}
+            onClick={handleCopy}
           >
             <span className="mp-pillbtn-icon">
               {copied ? <CheckIcon /> : <CopyIcon />}
@@ -89,7 +107,11 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
               {copied ? "copied" : "copy"}
             </span>
           </button>
-          <button type="button" className="mp-pillbtn mp-pillbtn--primary">
+          <button
+            type="button"
+            className="mp-pillbtn mp-pillbtn--primary"
+            onClick={handleDownloadPdf}
+          >
             <span className="mp-pillbtn-icon">
               <PdfIcon />
             </span>

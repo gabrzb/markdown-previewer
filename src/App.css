@@ -65,7 +65,7 @@ body,
 
 body {
   font-family:
-    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
     sans-serif;
   color: var(--ink);
   background: var(--bg-desk);
@@ -178,9 +178,17 @@ button {
   background: var(--ink-faint);
 }
 
-.mp-close:hover {
+.mp-close:hover,
+.mp-close:focus-visible {
   background: var(--accent);
   border-color: var(--accent);
+  outline: none;
+}
+
+.mp-win--focused .mp-close:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  outline: none;
 }
 
 .mp-title {
@@ -278,8 +286,10 @@ button {
     transform 100ms ease;
 }
 
-.mp-pillbtn:hover {
+.mp-pillbtn:hover,
+.mp-pillbtn:focus-visible {
   background: color-mix(in oklch, var(--pill-ink) 8%, transparent);
+  outline: none;
 }
 
 .mp-pillbtn:active {
@@ -321,9 +331,11 @@ button {
     color 120ms ease;
 }
 
-.mp-themetoggle:hover {
+.mp-themetoggle:hover,
+.mp-themetoggle:focus-visible {
   background: var(--line);
   color: var(--ink);
+  outline: none;
 }
 
 /* ────────── print ────────── */

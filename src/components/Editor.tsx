@@ -7,9 +7,10 @@ type EditorProps = {
   onChange: (next: string) => void;
   focused: boolean;
   onFocus: () => void;
+  onReset?: () => void;
 };
 
-export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
+export function Editor({ value, onChange, focused, onFocus, onReset }: EditorProps) {
   const lineCount = useMemo(() => value.split("\n").length, [value]);
   const wordCount = useMemo(
     () => (value.trim().match(/\S+/g) || []).length,
@@ -80,7 +81,7 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
         </div>
 
         <div className="mp-pill mp-pill--br">
-          <button type="button" className="mp-pillbtn">
+          <button type="button" className="mp-pillbtn" onClick={onReset}>
             <span className="mp-pillbtn-icon">
               <ResetIcon />
             </span>
