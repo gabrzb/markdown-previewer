@@ -1,53 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { Editor } from "./components/Editor";
 import { Preview } from "./components/Preview";
 import { Toolbar } from "./components/Toolbar";
-
-const DEFAULT_MD = `# Project notes
-
-A quick rundown of where things stand this week. The editor and
-preview have settled on **two floating windows** rather than a split
-pane — each can be moved and resized on its own.
-
-## Status
-
-- Wireframes approved (option C)
-- Hi-fi shipped to design review
-- *Open question:* keyboard shortcuts
-
-## Try editing
-
-Type in the left window. Use \`**bold**\`, \`*italic*\`, lists, headings,
-or fenced code blocks. The preview updates as you type.
-
-\`\`\`js
-export const render = (md) => parse(md);
-\`\`\`
-
-> The buttons stay out of the way — a small pill in the corner of
-> each window — until you reach for them.
-
----
-
-1. Copy to clipboard
-2. Save as PDF
-3. Reset the editor
-`;
+import { newDocument, openDocument, saveDocument } from "./api/tauriCommands";
 
 type FocusedWindow = "editor" | "preview";
 
 function App() {
-  const [markdown, setMarkdown] = useState(DEFAULT_MD);
+  const [markdown, setMarkdown] = useState("");
+  const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [focused, setFocused] = useState<FocusedWindow>("preview");
+
+  useEffect(() => {
+    newDocument()
+      .then((doc) => {
+        setMarkdown(doc.content);
+        setCurrentPath(doc.path);
+      })
+      .catch(console.error);
+  }, []);
+
+  const handleNew = () => {
+    newDocument()
+      .then((doc) => {
+        setMarkdown(doc.content);
+        setCurrentPath(doc.path);
+      })
+      .catch(console.error);
+  };
+
+  const handleOpen = () => {
+    openDocument()
+      .then((doc) => {
+        if (doc) {
+          setMarkdown(doc.content);
+          setCurrentPath(doc.path);
+        }
+      })
+      .catch(console.error);
+  };
+
+  const handleSave = () => {
+    saveDocument({ path: currentPath, content: markdown }).catch(console.error);
+  };
+
+  const handleReset = () => {
+    newDocument()
+      .then((doc) => {
+        setMarkdown(doc.content);
+        setCurrentPath(doc.path);
+      })
+      .catch(console.error);
+  };
 
   return (
     <div className="mp-app">
       <Toolbar
-        onNew={() => {}}
-        onOpen={() => {}}
-        onSave={() => {}}
-        onReset={() => setMarkdown(DEFAULT_MD)}
+        onNew={handleNew}
+        onOpen={handleOpen}
+        onSave={handleSave}
+        onReset={handleReset}
         onCopy={async () => {
           await navigator.clipboard.writeText(markdown);
         }}
