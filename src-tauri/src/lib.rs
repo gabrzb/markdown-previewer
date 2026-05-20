@@ -15,6 +15,8 @@ pub fn run() {
             commands::file_actions::new_document,
             commands::file_actions::open_document,
             commands::file_actions::save_document,
+            commands::clipboard::copy_to_clipboard,
+            commands::pdf_export::export_pdf,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

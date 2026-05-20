@@ -43,7 +43,7 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
 
   return (
     <div
-      className={"mp-win" + (focused ? " mp-win--focused" : "")}
+      className={"mp-win mp-win--editor" + (focused ? " mp-win--focused" : "")}
       onMouseDown={onFocus}
       style={{ zIndex: focused ? 2 : 1 }}
     >
@@ -75,7 +75,7 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
         </div>
 
         <div className="mp-status">
-          {wordCount} words · {charCount} chars
+          {wordCount} palavras · {charCount} caracteres
         </div>
       </div>
     </div>

@@ -1,4 +1,6 @@
+pub mod clipboard;
 pub mod file_actions;
+pub mod pdf_export;
 
 #[tauri::command]
 pub fn greet(name: &str) -> String {
