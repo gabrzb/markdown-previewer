@@ -68,8 +68,11 @@ export const OpenFileIcon = (): ReactElement => (
 
 export const SaveFileIcon = (): ReactElement => (
   <svg {...baseProps}>
-    <path d="M8 3v7.5" />
-    <path d="M5.5 8l2.5 2.5 2.5-2.5" />
-    <path d="M2.5 13.5h11" />
+    {/* outer casing */}
+    <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" />
+    {/* write-protect notch */}
+    <rect x="5.5" y="2.5" width="5" height="4" />
+    {/* label window */}
+    <rect x="4.5" y="9" width="7" height="3.5" rx="0.5" />
   </svg>
 );

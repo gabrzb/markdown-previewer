@@ -1,16 +1,19 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "./Preview.css";
 import { MoonIcon, SunIcon } from "./icons";
 
 type PreviewProps = {
+  scrollRef: React.RefObject<HTMLDivElement>;
   source: string;
   focused: boolean;
   onFocus: () => void;
+  fileName: string;
+  isDirty: boolean;
 };
 
-export function Preview({ source, focused, onFocus }: PreviewProps) {
+export function Preview({ scrollRef, source, focused, onFocus, fileName, isDirty }: PreviewProps) {
   const [dark, setDark] = useState(false);
 
   const wordCount = useMemo(
@@ -32,7 +35,7 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
     >
       <div className="mp-titlebar">
         <div className="mp-close" />
-        <div className="mp-title">notes.md</div>
+        <div className="mp-title">{fileName}{isDirty ? " •" : ""}</div>
         <div className="mp-titlebar-right">
           <button
             type="button"
@@ -46,7 +49,7 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
       </div>
 
       <div className="mp-body">
-        <div className="mp-preview mp-preview--serif">
+        <div ref={scrollRef} className="mp-preview mp-preview--serif">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{source}</ReactMarkdown>
         </div>
 
