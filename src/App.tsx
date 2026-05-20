@@ -21,6 +21,17 @@ function baseName(path: string): string {
   return path.split(/[\\/]/).pop() ?? path;
 }
 
+// Extracts a user-facing message from a Tauri command rejection.
+// Tauri serialises AppError as {message: string}; fall back gracefully.
+function appError(e: unknown): string {
+  if (typeof e === "object" && e !== null) {
+    const msg = (e as Record<string, unknown>).message;
+    if (typeof msg === "string" && msg) return msg;
+  }
+  if (typeof e === "string" && e) return e;
+  return "Operação falhou";
+}
+
 function App() {
   const [markdown, setMarkdown] = useState("");
   const [savedContent, setSavedContent] = useState("");
@@ -28,6 +39,8 @@ function App() {
   const [fileName, setFileName] = useState("sem título");
   const [focused, setFocused] = useState<FocusedWindow>("preview");
   const [isBusy, setIsBusy] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+
   // Synchronous guard — isBusy state update is async, so menu listeners
   // could start a second operation before the re-render propagates.
   const isBusyRef = useRef(false);
@@ -53,6 +66,15 @@ function App() {
   useEffect(() => {
     document.title = isDirty ? `${fileName} •` : fileName;
   }, [isDirty, fileName]);
+
+  // Auto-dismiss notification after 4 s
+  useEffect(() => {
+    if (!notification) return;
+    const t = setTimeout(() => setNotification(null), 4000);
+    return () => clearTimeout(t);
+  }, [notification]);
+
+  const showError = (e: unknown) => setNotification(appError(e));
 
   const applyDocument = (doc: MarkdownDocument) => {
     setMarkdown(doc.content);
@@ -94,7 +116,7 @@ function App() {
         enterBusy();
         openDocument()
           .then((doc) => { if (doc) applyDocument(doc); })
-          .catch(console.error)
+          .catch(showError)
           .finally(exitBusy);
       }),
       listen("menu:save", () => {
@@ -112,7 +134,7 @@ function App() {
               setFileName(baseName(savedPath));
             }
           })
-          .catch(console.error)
+          .catch(showError)
           .finally(exitBusy);
       }),
       listen("menu:save-as", () => {
@@ -127,13 +149,13 @@ function App() {
             setCurrentPath(savedPath);
             setFileName(baseName(savedPath));
           })
-          .catch(console.error)
+          .catch(showError)
           .finally(exitBusy);
       }),
       listen("menu:copy", () =>
-        copyToClipboard(markdownRef.current).catch(console.error),
+        copyToClipboard(markdownRef.current).catch(showError),
       ),
-      listen("menu:export-pdf", () => exportPdf().catch(console.error)),
+      listen("menu:export-pdf", () => exportPdf().catch(showError)),
     ];
 
     return () => {
@@ -152,7 +174,7 @@ function App() {
     enterBusy();
     openDocument()
       .then((doc) => { if (doc) applyDocument(doc); })
-      .catch(console.error)
+      .catch(showError)
       .finally(exitBusy);
   };
 
@@ -190,7 +212,7 @@ function App() {
         setCurrentPath(newPath);
         setFileName(baseName(newPath));
       } catch (e) {
-        console.error(e);
+        showError(e);
       } finally {
         exitBusy();
       }
@@ -206,12 +228,9 @@ function App() {
         onOpen={handleOpen}
         onSave={handleSave}
         onReset={handleReset}
-        onCopy={async () => {
-          await copyToClipboard(markdown);
-        }}
-        onExportPdf={() => {
-          exportPdf().catch(console.error);
-        }}
+        onCopy={async () => { await copyToClipboard(markdown); }}
+        onExportPdf={() => { exportPdf().catch(showError); }}
+        onError={showError}
         isBusy={isBusy}
         isDirty={isDirty}
       />
@@ -235,6 +254,9 @@ function App() {
           isDirty={isDirty}
         />
       </div>
+      {notification && (
+        <div className="mp-notification" role="alert">{notification}</div>
+      )}
     </div>
   );
 }
