@@ -1,89 +1,101 @@
 # Markdown Preview
 
-A simple desktop Markdown editor and previewer built with React, TypeScript, Vite, and Tauri.
+A focused desktop Markdown editor built with React, TypeScript, Vite, and Tauri. Write Markdown on one side and instantly see the rendered output on the other — all in a native desktop application.
 
-The goal of the project is to provide a focused workspace where users can write Markdown on one side and inspect the rendered preview on the other side.
+---
 
-## Current Status
+## Demo
 
-The application currently includes the base visual structure:
+![Demo](docs/demo.gif)
 
-- A top toolbar for document actions.
-- A split workspace with an editor panel and a preview panel.
-- Separate React components for the toolbar, editor, and preview.
-- Separate CSS files per component to keep styling responsibilities clear.
+---
 
-Markdown rendering, file actions, clipboard support, PDF export, and scroll synchronization are planned but not implemented yet.
+## Features
 
-## Planned Features
+- **Live preview** — Markdown is rendered in real time as you type.
+- **File operations** — Create new documents, open existing `.md` files, save, and save as.
+- **Editable document title** — Rename the document directly from the editor header; renames the file on disk if it has been saved.
+- **Unsaved-changes indicator** — A dot (`•`) appears in the toolbar and window title whenever there are unsaved changes. A confirmation dialog prevents accidental data loss.
+- **Copy to clipboard** — Copies the Markdown source with a brief visual confirmation.
+- **PDF export** — Exports the rendered preview as a PDF file.
+- **Scroll synchronization** — The editor and preview panels scroll together proportionally.
+- **Native menu integration** — File menu with keyboard shortcuts mirrors all toolbar actions.
+- **Error notifications** — Toast-style messages surface errors from any file or export operation.
 
-- Live Markdown preview.
-- New document action.
-- Open local `.md` files.
-- Save Markdown files.
-- Reset editor content to a default template.
-- Copy Markdown or rendered HTML to the clipboard.
-- Export the preview as PDF.
-- Synchronized scrolling between the editor and preview.
-- Visual feedback for completed or failed actions.
+---
 
 ## Tech Stack
 
-- React
-- TypeScript
-- Vite
-- Tauri
+| Layer | Technology |
+|---|---|
+| UI framework | React 18 |
+| Language | TypeScript |
+| Build tool | Vite |
+| Desktop runtime | Tauri 2 |
+
+---
 
 ## Project Structure
 
-```text
+```
 src/
-  App.tsx
-  App.css
-  components/
-    Editor.tsx
-    Editor.css
-    Preview.tsx
-    Preview.css
-    Toolbar.tsx
-    Toolbar.css
-src-tauri/
-  Tauri desktop application source
+├── App.tsx                  # Root component and application state
+├── App.css
+├── api/
+│   └── tauriCommands.ts     # Typed wrappers around Tauri backend commands
+├── components/
+│   ├── Editor.tsx / .css    # Textarea with editable filename header
+│   ├── Preview.tsx / .css   # Rendered Markdown panel
+│   ├── Toolbar.tsx / .css   # Action buttons with busy/dirty/done states
+│   └── icons.tsx            # SVG icon components
+├── types/
+│   └── document.ts          # MarkdownDocument type
+└── utils/
+    └── scrollSync.ts        # Proportional scroll synchronization hook
+
+src-tauri/                   # Rust backend (Tauri)
 ```
 
-## Development
+---
 
-Install dependencies:
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18+
+- [Rust](https://www.rust-lang.org/tools/install) (required by Tauri)
+- [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your platform
+
+### Installation
 
 ```bash
 npm install
 ```
 
-Run the Vite development server:
+### Running in development
 
-```bash
-npm run dev
-```
-
-Build the frontend:
-
-```bash
-npm run build
-```
-
-Run the Tauri application:
+Start the Tauri application with hot reload:
 
 ```bash
 npm run tauri dev
 ```
 
-## Implementation Roadmap
+To run only the Vite frontend (browser, no desktop features):
 
-1. Build the base layout with toolbar, editor, and preview.
-2. Add Markdown state management.
-3. Implement real-time Markdown rendering.
-4. Add document actions: new, open, and save.
-5. Add reset and copy actions with user feedback.
-6. Add PDF export from the preview area.
-7. Add bidirectional scroll synchronization.
-8. Refine error handling and loading states.
+```bash
+npm run dev
+```
+
+### Building for production
+
+```bash
+npm run tauri build
+```
+
+The installer is placed in `src-tauri/target/release/bundle/`.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
