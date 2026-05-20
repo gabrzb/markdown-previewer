@@ -28,6 +28,9 @@ function App() {
   const [fileName, setFileName] = useState("sem título");
   const [focused, setFocused] = useState<FocusedWindow>("preview");
   const [isBusy, setIsBusy] = useState(false);
+  // Synchronous guard — isBusy state update is async, so menu listeners
+  // could start a second operation before the re-render propagates.
+  const isBusyRef = useRef(false);
 
   const isDirty = markdown !== savedContent;
 
@@ -63,6 +66,16 @@ function App() {
     !isDirtyRef.current ||
     window.confirm("Há alterações não salvas. Deseja descartá-las?");
 
+  const enterBusy = () => {
+    isBusyRef.current = true;
+    setIsBusy(true);
+  };
+
+  const exitBusy = () => {
+    isBusyRef.current = false;
+    setIsBusy(false);
+  };
+
   // Init on mount
   useEffect(() => {
     newDocument().then(applyDocument).catch(console.error);
@@ -77,17 +90,19 @@ function App() {
       }),
       listen("menu:open", () => {
         if (!confirmDiscard()) return;
-        setIsBusy(true);
+        if (isBusyRef.current) return;
+        enterBusy();
         openDocument()
           .then((doc) => { if (doc) applyDocument(doc); })
           .catch(console.error)
-          .finally(() => setIsBusy(false));
+          .finally(exitBusy);
       }),
       listen("menu:save", () => {
+        if (isBusyRef.current) return;
+        enterBusy();
         const content = markdownRef.current;
         const path = currentPathRef.current;
         const name = fileNameRef.current;
-        setIsBusy(true);
         saveDocument({ path, content }, path ? undefined : name)
           .then((savedPath) => {
             if (savedPath === null) return;
@@ -98,12 +113,13 @@ function App() {
             }
           })
           .catch(console.error)
-          .finally(() => setIsBusy(false));
+          .finally(exitBusy);
       }),
       listen("menu:save-as", () => {
+        if (isBusyRef.current) return;
+        enterBusy();
         const content = markdownRef.current;
         const name = fileNameRef.current;
-        setIsBusy(true);
         saveDocument({ path: null, content }, name)
           .then((savedPath) => {
             if (savedPath === null) return;
@@ -112,7 +128,7 @@ function App() {
             setFileName(baseName(savedPath));
           })
           .catch(console.error)
-          .finally(() => setIsBusy(false));
+          .finally(exitBusy);
       }),
       listen("menu:copy", () =>
         copyToClipboard(markdownRef.current).catch(console.error),
@@ -132,16 +148,18 @@ function App() {
 
   const handleOpen = () => {
     if (!confirmDiscard()) return;
-    setIsBusy(true);
+    if (isBusyRef.current) return;
+    enterBusy();
     openDocument()
       .then((doc) => { if (doc) applyDocument(doc); })
       .catch(console.error)
-      .finally(() => setIsBusy(false));
+      .finally(exitBusy);
   };
 
   const handleSave = async () => {
+    if (isBusyRef.current) return;
+    enterBusy();
     const content = markdown;
-    setIsBusy(true);
     try {
       const savedPath = await saveDocument(
         { path: currentPath, content },
@@ -154,7 +172,7 @@ function App() {
         setFileName(baseName(savedPath));
       }
     } finally {
-      setIsBusy(false);
+      exitBusy();
     }
   };
 
@@ -165,12 +183,16 @@ function App() {
 
   const handleRename = async (newName: string) => {
     if (currentPath) {
+      if (isBusyRef.current) return;
+      enterBusy();
       try {
         const newPath = await renameDocument(currentPath, newName);
         setCurrentPath(newPath);
         setFileName(baseName(newPath));
       } catch (e) {
         console.error(e);
+      } finally {
+        exitBusy();
       }
     } else {
       setFileName(newName);

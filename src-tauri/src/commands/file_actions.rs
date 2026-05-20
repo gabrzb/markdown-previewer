@@ -81,6 +81,18 @@ pub fn rename_document(old_path: String, new_name: String) -> Result<String, App
         .parent()
         .ok_or_else(|| AppError::new("Caminho inválido"))?;
     let new_path = dir.join(&new_name);
+    if new_path.exists() {
+        let canon_old = old
+            .canonicalize()
+            .map_err(|e| AppError::new(format!("Caminho inválido: {e}")))?;
+        let canon_new = new_path
+            .canonicalize()
+            .map_err(|e| AppError::new(format!("Caminho inválido: {e}")))?;
+        if canon_old != canon_new {
+            return Err(AppError::new("Já existe um arquivo com esse nome"));
+        }
+        // Same underlying file (e.g. case change on case-insensitive FS) — proceed.
+    }
     std::fs::rename(&old, &new_path)
         .map_err(|e| AppError::new(format!("Erro ao renomear: {e}")))?;
     Ok(new_path.to_string_lossy().into_owned())
