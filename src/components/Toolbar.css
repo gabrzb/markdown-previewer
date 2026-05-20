@@ -73,3 +73,12 @@
 .mp-toolbar-btn--done {
   color: var(--accent);
 }
+
+.mp-toolbar-btn--dirty {
+  color: var(--accent);
+}
+
+.mp-toolbar-btn--dirty:hover,
+.mp-toolbar-btn--dirty:focus-visible {
+  background: color-mix(in oklch, var(--accent) 10%, transparent);
+}

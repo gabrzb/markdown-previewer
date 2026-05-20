@@ -2,13 +2,17 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./Editor.css";
 
 type EditorProps = {
+  scrollRef: React.RefObject<HTMLTextAreaElement>;
   value: string;
   onChange: (next: string) => void;
   focused: boolean;
   onFocus: () => void;
+  fileName: string;
+  isDirty: boolean;
+  onRename: (newName: string) => void;
 };
 
-export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
+export function Editor({ scrollRef, value, onChange, focused, onFocus, fileName, isDirty, onRename }: EditorProps) {
   const lineCount = useMemo(() => value.split("\n").length, [value]);
   const wordCount = useMemo(
     () => (value.trim().match(/\S+/g) || []).length,
@@ -17,11 +21,22 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
   const charCount = value.length;
 
   const gutterRef = useRef<HTMLDivElement>(null);
-  const taRef = useRef<HTMLTextAreaElement>(null);
   const [lineHeight, setLineHeight] = useState(22.95);
 
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitle, setEditTitle] = useState(fileName);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    const ta = taRef.current;
+    if (!isEditingTitle) setEditTitle(fileName);
+  }, [fileName, isEditingTitle]);
+
+  useEffect(() => {
+    if (isEditingTitle) titleInputRef.current?.select();
+  }, [isEditingTitle]);
+
+  useEffect(() => {
+    const ta = scrollRef.current;
     if (!ta) return;
 
     const measure = () => {
@@ -33,11 +48,27 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
     const ro = new ResizeObserver(measure);
     ro.observe(ta);
     return () => ro.disconnect();
-  }, []);
+  }, [scrollRef]);
 
   const syncGutter = () => {
-    if (gutterRef.current && taRef.current) {
-      gutterRef.current.scrollTop = taRef.current.scrollTop;
+    if (gutterRef.current && scrollRef.current) {
+      gutterRef.current.scrollTop = scrollRef.current.scrollTop;
+    }
+  };
+
+  const commitTitle = () => {
+    setIsEditingTitle(false);
+    const trimmed = editTitle.trim();
+    if (trimmed && trimmed !== fileName) onRename(trimmed);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitTitle();
+    } else if (e.key === "Escape") {
+      setIsEditingTitle(false);
+      setEditTitle(fileName);
     }
   };
 
@@ -49,7 +80,25 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
     >
       <div className="mp-titlebar">
         <div className="mp-close" />
-        <div className="mp-title">notes.md</div>
+        {isEditingTitle ? (
+          <input
+            ref={titleInputRef}
+            type="text"
+            className="mp-title mp-title-input"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            onKeyDown={handleTitleKeyDown}
+            onBlur={commitTitle}
+          />
+        ) : (
+          <div
+            className="mp-title"
+            onDoubleClick={() => { setEditTitle(fileName); setIsEditingTitle(true); }}
+            title="Clique duplo para renomear"
+          >
+            {fileName}{isDirty ? " •" : ""}
+          </div>
+        )}
         <div className="mp-titlebar-right" />
       </div>
 
@@ -64,7 +113,7 @@ export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
             ))}
           </div>
           <textarea
-            ref={taRef}
+            ref={scrollRef}
             className="mp-textarea"
             value={value}
             onChange={(e) => onChange(e.target.value)}

@@ -9,8 +9,14 @@ export function openDocument(): Promise<MarkdownDocument | null> {
   return invoke("open_document");
 }
 
-export function saveDocument(doc: MarkdownDocument): Promise<void> {
-  return invoke("save_document", { doc });
+// Returns the saved path, or null if the dialog was cancelled.
+export function saveDocument(doc: MarkdownDocument, fileName?: string): Promise<string | null> {
+  return invoke("save_document", { doc, file_name: fileName ?? null });
+}
+
+// Renames an existing file within its directory. Returns the new absolute path.
+export function renameDocument(oldPath: string, newName: string): Promise<string> {
+  return invoke("rename_document", { old_path: oldPath, new_name: newName });
 }
 
 export function copyToClipboard(content: string): Promise<void> {
