@@ -1,0 +1,75 @@
+.mp-toolbar {
+  flex: 0 0 auto;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+}
+
+.mp-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--pill-bg);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--pill-border);
+  border-radius: 8px;
+  padding: 3px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 2px 8px rgba(26, 24, 22, 0.06);
+}
+
+:root[data-theme="dark"] .mp-toolbar-group {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mp-toolbar-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--pill-ink);
+  padding: 4px 10px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    transform 100ms ease;
+}
+
+.mp-toolbar-btn:hover,
+.mp-toolbar-btn:focus-visible {
+  background: color-mix(in oklch, var(--pill-ink) 8%, transparent);
+  outline: none;
+}
+
+.mp-toolbar-btn:active {
+  transform: scale(0.97);
+}
+
+.mp-toolbar-btn--primary {
+  background: var(--pill-primary-bg);
+  color: var(--pill-primary-ink);
+}
+
+.mp-toolbar-btn--primary:hover {
+  background: color-mix(in oklch, var(--pill-primary-bg) 88%, var(--accent));
+}
+
+.mp-toolbar-btn--done {
+  color: var(--accent);
+}

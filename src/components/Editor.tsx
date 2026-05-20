@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./Editor.css";
-import { ResetIcon } from "./icons";
 
 type EditorProps = {
   value: string;
   onChange: (next: string) => void;
   focused: boolean;
   onFocus: () => void;
-  onReset?: () => void;
 };
 
-export function Editor({ value, onChange, focused, onFocus, onReset }: EditorProps) {
+export function Editor({ value, onChange, focused, onFocus }: EditorProps) {
   const lineCount = useMemo(() => value.split("\n").length, [value]);
   const wordCount = useMemo(
     () => (value.trim().match(/\S+/g) || []).length,
@@ -78,15 +76,6 @@ export function Editor({ value, onChange, focused, onFocus, onReset }: EditorPro
 
         <div className="mp-status">
           {wordCount} words · {charCount} chars
-        </div>
-
-        <div className="mp-pill mp-pill--br">
-          <button type="button" className="mp-pillbtn" onClick={onReset}>
-            <span className="mp-pillbtn-icon">
-              <ResetIcon />
-            </span>
-            <span className="mp-pillbtn-label">reset</span>
-          </button>
         </div>
       </div>
     </div>

@@ -51,3 +51,25 @@ export const CheckIcon = (): ReactElement => (
     <path d="M3 8.5 6.5 12 13 4.5" />
   </svg>
 );
+
+export const NewDocIcon = (): ReactElement => (
+  <svg {...baseProps}>
+    <path d="M9 2H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V5L9 2z" />
+    <path d="M9 2v3h3" />
+    <path d="M8 8.5v3M6.5 10h3" />
+  </svg>
+);
+
+export const OpenFileIcon = (): ReactElement => (
+  <svg {...baseProps}>
+    <path d="M1.5 12.5V5.5a1 1 0 0 1 1-1h3.5l1.5 1.5H14a.5.5 0 0 1 .5.5v6a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" />
+  </svg>
+);
+
+export const SaveFileIcon = (): ReactElement => (
+  <svg {...baseProps}>
+    <path d="M8 3v7.5" />
+    <path d="M5.5 8l2.5 2.5 2.5-2.5" />
+    <path d="M2.5 13.5h11" />
+  </svg>
+);
