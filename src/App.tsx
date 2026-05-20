@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { Editor } from "./components/Editor";
 import { Preview } from "./components/Preview";
+import { Toolbar } from "./components/Toolbar";
 
 const DEFAULT_MD = `# Project notes
 
@@ -41,19 +42,30 @@ function App() {
   const [focused, setFocused] = useState<FocusedWindow>("preview");
 
   return (
-    <div className="mp-desktop">
-      <Editor
-        value={markdown}
-        onChange={setMarkdown}
-        focused={focused === "editor"}
-        onFocus={() => setFocused("editor")}
+    <div className="mp-app">
+      <Toolbar
+        onNew={() => {}}
+        onOpen={() => {}}
+        onSave={() => {}}
         onReset={() => setMarkdown(DEFAULT_MD)}
+        onCopy={async () => {
+          await navigator.clipboard.writeText(markdown);
+        }}
+        onExportPdf={() => window.print()}
       />
-      <Preview
-        source={markdown}
-        focused={focused === "preview"}
-        onFocus={() => setFocused("preview")}
-      />
+      <div className="mp-desktop">
+        <Editor
+          value={markdown}
+          onChange={setMarkdown}
+          focused={focused === "editor"}
+          onFocus={() => setFocused("editor")}
+        />
+        <Preview
+          source={markdown}
+          focused={focused === "preview"}
+          onFocus={() => setFocused("preview")}
+        />
+      </div>
     </div>
   );
 }

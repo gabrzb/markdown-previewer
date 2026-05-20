@@ -44,13 +44,6 @@
   background: color-mix(in oklch, var(--accent) 30%, transparent);
 }
 
-/* pill positioning: editor uses bottom-right */
-.mp-pill--br {
-  position: absolute;
-  bottom: 14px;
-  right: 14px;
-}
-
 /* scrollbars for editor textarea */
 .mp-textarea {
   scrollbar-width: thin;
