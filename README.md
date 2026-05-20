@@ -6,21 +6,7 @@ A focused desktop Markdown editor built with React, TypeScript, Vite, and Tauri.
 
 ## Demo
 
-<!-- Add a screen recording or GIF here demonstrating the application in use -->
-<!-- Example: ![Demo](docs/demo.gif) -->
-
-> _Screen recording coming soon._
-
----
-
-## Screenshots
-
-<!-- Add screenshots of the application below -->
-<!-- Example: ![Main interface](docs/screenshots/main.png) -->
-
-| Editor & Preview | File Operations | PDF Export |
-|:---:|:---:|:---:|
-| _screenshot_ | _screenshot_ | _screenshot_ |
+![Demo](docs/demo.gif)
 
 ---
 
