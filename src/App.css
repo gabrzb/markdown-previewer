@@ -277,17 +277,66 @@ button {
 /* ────────── print ────────── */
 @media print {
   @page {
-    margin: 18mm;
     size: A4;
+    margin: 0;
   }
 
+  /* Let content flow as a normal document */
   html,
-  body {
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
     background: #fff !important;
   }
 
-  .mp-desktop,
-  .mp-win:not(.mp-print-preview) {
+  /* Hide everything that doesn't belong in the printed page */
+  .mp-toolbar,
+  .mp-win--editor,
+  .mp-titlebar,
+  .mp-status {
     display: none !important;
+  }
+
+  /* Collapse layout wrappers so the preview flows naturally */
+  .mp-app,
+  .mp-desktop,
+  .mp-win--preview,
+  .mp-body {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    flex: none !important;
+  }
+
+  /*
+   * Center the content block on the A4 page.
+   * min-height: 297mm makes the wrapper fill one full page so short
+   * documents sit in the middle rather than sticking to the top.
+   * For content taller than one page the flex column simply overflows
+   * into the next page as normal.
+   */
+  .mp-body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: 297mm !important;
+  }
+
+  /* Preview content itself — padding replaces the @page margin */
+  .mp-preview {
+    overflow: visible !important;
+    padding: 22mm !important;
+    height: auto !important;
+    max-height: none !important;
   }
 }

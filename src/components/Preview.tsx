@@ -26,7 +26,7 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
 
   return (
     <div
-      className={"mp-win" + (focused ? " mp-win--focused" : "")}
+      className={"mp-win mp-win--preview" + (focused ? " mp-win--focused" : "")}
       onMouseDown={onFocus}
       style={{ zIndex: focused ? 2 : 1 }}
     >
@@ -51,7 +51,7 @@ export function Preview({ source, focused, onFocus }: PreviewProps) {
         </div>
 
         <div className="mp-status">
-          <span className="mp-sync-dot" /> synced · {wordCount} words
+          <span className="mp-sync-dot" /> sincronizado · {wordCount} palavras
         </div>
       </div>
     </div>
