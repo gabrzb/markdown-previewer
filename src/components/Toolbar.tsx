@@ -17,6 +17,7 @@ type ToolbarProps = {
   onReset: () => void;
   onCopy: () => Promise<void>;
   onExportPdf: () => void;
+  onError: (e: unknown) => void;
   isBusy: boolean;
   isDirty: boolean;
 };
@@ -28,6 +29,7 @@ export function Toolbar({
   onReset,
   onCopy,
   onExportPdf,
+  onError,
   isBusy,
   isDirty,
 }: ToolbarProps) {
@@ -35,9 +37,13 @@ export function Toolbar({
   const [saved, setSaved] = useState(false);
 
   const handleCopy = async () => {
-    await onCopy();
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await onCopy();
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      onError(e);
+    }
   };
 
   const handleSave = async () => {
@@ -45,8 +51,8 @@ export function Toolbar({
       await onSave();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch {
-      // error UX handled in PR #6
+    } catch (e) {
+      onError(e);
     }
   };
 
